@@ -7,7 +7,14 @@ void writeFileTest()
 	shaneutility::WriteFile_C("C:\\TMP\\fileTest.txt", "\nShane");
 }
 
+void WriteFileCppTest()
+{
+	shaneutility::WriteFile_CPP("test.txt", "hello\n");
+	shaneutility::WriteFile_CPP("test.txt", L"hihihi\n");
+}
+
 int main() 
 {
-	writeFileTest();
+	//writeFileTest();
+	WriteFileCppTest();
 }
