@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 
 struct TreeNode
 {
@@ -16,6 +17,9 @@ public:
 	bool Search(int data);
 	int GetMax();
 	int GetMin();
+	int GetHeight();
+	void PreOrder();
+	void LevelOrder();
 
 private:
 	TreeNode* m_root{nullptr};
@@ -24,6 +28,9 @@ private:
 	int GetMin(TreeNode*);
 	TreeNode* Insert(TreeNode* node, int data);
         bool Search(TreeNode* node, int data);
+	int GetHeight(TreeNode* node);
+	void PreOrder(TreeNode* node);
+	void LevelOrder(TreeNode* node);
 };
 
 TreeNode* LinkedTree::GetNode(int data)
@@ -126,6 +133,81 @@ int LinkedTree::GetMin(TreeNode* node)
         return node->data;
 }
 
+int LinkedTree::GetHeight()
+{
+	return GetHeight(m_root);
+}
+
+int LinkedTree::GetHeight(TreeNode* node)
+{
+	if(node == nullptr)
+	{
+		return 0;
+	}
+	else if(node->leftNode == nullptr && node->rightNode == nullptr)
+	{
+		return 0;
+	}
+	else
+	{
+		return std::max(GetHeight(node->leftNode), GetHeight(node->rightNode))+1;
+	}
+}
+
+void LinkedTree::PreOrder()
+{
+	std::cout << "PreOrder: ";
+	PreOrder(m_root);
+	std::cout<< '\n';
+}
+
+void LinkedTree::PreOrder(TreeNode* node)
+{
+	if(node == nullptr)
+	{
+		return;
+	}
+	
+	std::cout << node->data << ' ';
+	
+	PreOrder(node->leftNode);
+	PreOrder(node->rightNode);
+}
+
+void LinkedTree::LevelOrder()
+{
+	std::cout << "LevelOrder: ";
+	LevelOrder(m_root);
+	std::cout << '\n';
+}
+
+void LinkedTree::LevelOrder(TreeNode* node)
+{
+	std::queue<TreeNode*> nodeQueue;
+	if(node)
+	{
+		nodeQueue.push(node);
+	}
+
+	while(nodeQueue.empty() == false)
+	{
+		TreeNode* tmp = nodeQueue.front();
+		nodeQueue.pop();
+		
+		if(tmp->leftNode)
+		{
+			nodeQueue.push(tmp->leftNode);
+		}
+
+		if(tmp->rightNode)
+		{
+			nodeQueue.push(tmp->rightNode);
+		}
+
+		std::cout << tmp->data << ' ';
+	}
+}
+
 
 int main()
 {
@@ -137,9 +219,23 @@ int main()
 
 	std::cout << "search for 5: " << (tree.Search(5) ? "found" : "not found") << std::endl;
 	std::cout << "search for 25: " << (tree.Search(25) ? "found" : "not found") << std::endl;	
+
+	std::cout << "Height: " << tree.GetHeight() << std::endl; //2
+
+	tree.Insert(1);
+	std::cout << "Height: " << tree.GetHeight() << std::endl; //2
+	tree.Insert(-2);
+	std::cout << "Height: " << tree.GetHeight() << std::endl; //3
+	tree.Insert(15);
+	std::cout << "Height: " << tree.GetHeight() << std::endl; //3
+	tree.Insert(14);
+	std::cout << "Height: " << tree.GetHeight() << std::endl; //4
 	
 	std::cout << "Min value: " << tree.GetMin() << std::endl;
-	std::cout << "Max value: " << tree.GetMax() << std::endl;
+        std::cout << "Max value: " << tree.GetMax() << std::endl;
+
+	tree.PreOrder();
+	tree.LevelOrder();
 	return 0;
 }
 
