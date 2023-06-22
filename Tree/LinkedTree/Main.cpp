@@ -20,6 +20,8 @@ public:
 	int GetHeight();
 	void PreOrder();
 	void LevelOrder();
+	void Delete(int data);
+	void 
 
 private:
 	TreeNode* m_root{nullptr};
@@ -31,6 +33,7 @@ private:
 	int GetHeight(TreeNode* node);
 	void PreOrder(TreeNode* node);
 	void LevelOrder(TreeNode* node);
+	TreeNode* Delete(TreeNode* node, int data);
 };
 
 TreeNode* LinkedTree::GetNode(int data)
@@ -208,6 +211,74 @@ void LinkedTree::LevelOrder(TreeNode* node)
 	}
 }
 
+void LinkedTree::Delete(int data) 
+{
+	m_root = DeleteNode(m_root, data);
+}
+
+TreeNode* LinkedTree::Delete(TreeNode* node, int data) 
+{
+	if (node == nullptr) 
+	{
+		std::cout << "data: " << data << "not found in tree" << std::endl;
+	}
+	else if (data < node->data) 
+	{
+		node->leftNode = DeleteNode(node->leftNode, data);
+	}
+	else if (data > node->data) 
+	{
+		node->rightNode = DeleteNode(node->rightNode, data);
+	}
+	else 
+	{
+		if (node->leftNode == node->rightNode && node->leftNode == nullptr) 
+		{
+			delete node;
+			node = nullptr;
+		}
+		else if (node->leftNode == nullptr) 
+		{
+			TreeNode* tmp = node->rightNode;
+			delete node;
+			node = tmp;
+		}
+		else if (node->rightNode == nullptr) 
+		{
+			TreeNode* tmp = node->leftNode;
+			delete node;
+			node = tmp;
+		}
+		else 
+		{
+			TreeNode* current = node->leftNode;
+			while (true) 
+			{
+				if (current->rightNode) 
+				{
+					TreeNode* tmpNode = current;
+					current = current->rightNode;
+
+					if (current->rightNode == nullptr)
+					{
+						tmpNode->rightNode = nullptr;
+						break;
+					}					
+				}
+				else 
+				{
+					break;
+				}
+			}
+
+			current->rightNode = node->rightNode;
+			delete node;
+			node = current;
+		}
+	}
+
+	return node;
+}
 
 int main()
 {
@@ -231,9 +302,17 @@ int main()
 	tree.Insert(14);
 	std::cout << "Height: " << tree.GetHeight() << std::endl; //4
 	
+	tree.Insert(16);
+	tree.Insert(16);
+	tree.Insert(17);
 	std::cout << "Min value: " << tree.GetMin() << std::endl;
         std::cout << "Max value: " << tree.GetMax() << std::endl;
 
+	tree.PreOrder();
+	tree.LevelOrder();
+
+	tree.Delete(15);
+	
 	tree.PreOrder();
 	tree.LevelOrder();
 	return 0;
